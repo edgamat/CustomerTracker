@@ -1,8 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
     <ProjectReference Include="..\CustomerTracker.Domain\CustomerTracker.Domain.csproj" />
     <ProjectReference Include="..\CustomerTracker.Persistence\CustomerTracker.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers" />
   </ItemGroup>
 
   <PropertyGroup>
