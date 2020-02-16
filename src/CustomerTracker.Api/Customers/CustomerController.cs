@@ -29,15 +29,16 @@ namespace CustomerTracker.Api.Customers
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<Customer> FindByKeyAsync(Guid id)
+        public async Task<IActionResult> FindByKeyAsync(Guid id)
         {
             var customer = await _repository.FindByKeyAsync(id);
             if (customer == null)
             {
                 _logger.LogInformation("Customer Not Found: {id}", id);
+                return NotFound("unknown_customer");
             }
 
-            return customer;
+            return Ok(customer);
         }
 
         [HttpPost]
