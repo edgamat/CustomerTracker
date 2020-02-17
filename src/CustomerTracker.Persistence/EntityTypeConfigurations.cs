@@ -1,3 +1,5 @@
+using CustomerTracker.Persistence.Customers;
+
 namespace CustomerTracker.Persistence
 {
     public class EntityTypeConfigurations

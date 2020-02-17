@@ -15,18 +15,18 @@ namespace UnitTests.CustomerTracker.Api
         [Fact]
         public async Task Return_OK_Response_When_Found()
         {
-            var stubLogger = new Mock<ILogger<CustomerController>>();
+            var mockLogger = new Mock<ILogger<CustomerController>>();
             var stubRepository = new Mock<ICustomerRepository>();
 
             var id = Guid.NewGuid();
 
             stubRepository
                 .Setup(x => x.FindByKeyAsync(id))
-                .ReturnsAsync(new Customer());
+                .ReturnsAsync(new Customer { Id = id });
 
-            var sut = new CustomerController(stubLogger.Object, stubRepository.Object);
+            var sut = new CustomerController(mockLogger.Object, stubRepository.Object);
 
-            var result = await sut.FindByKeyAsync(id);
+            var result = await sut.GetById(id);
 
             result.Should().BeOfType<OkObjectResult>();
         }
@@ -41,7 +41,7 @@ namespace UnitTests.CustomerTracker.Api
 
             var sut = new CustomerController(mockLogger.Object, stubRepository.Object);
 
-            var result = await sut.FindByKeyAsync(id);
+            var result = await sut.GetById(id);
 
             result.Should().BeOfType<NotFoundObjectResult>();
         }
@@ -56,7 +56,7 @@ namespace UnitTests.CustomerTracker.Api
 
             var sut = new CustomerController(mockLogger.Object, stubRepository.Object);
 
-            var _ = await sut.FindByKeyAsync(id);
+            var _ = await sut.GetById(id);
 
             mockLogger.Verify(x =>
                 x.Log(
@@ -66,7 +66,6 @@ namespace UnitTests.CustomerTracker.Api
                     It.IsAny<Exception>(),
                     (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()
                 ), Times.Once);
-
         }
     }
 }

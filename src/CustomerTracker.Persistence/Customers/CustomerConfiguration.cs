@@ -3,7 +3,7 @@ using CustomerTracker.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 
-namespace CustomerTracker.Persistence
+namespace CustomerTracker.Persistence.Customers
 {
     public class CustomerConfiguration : IEntityTypeConfiguration
     {

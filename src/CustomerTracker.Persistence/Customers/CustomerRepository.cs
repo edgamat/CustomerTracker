@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using CustomerTracker.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace CustomerTracker.Persistence
+namespace CustomerTracker.Persistence.Customers
 {
     public class CustomerRepository : ICustomerRepository
     {
-        private readonly CustomerContext _context;
+        private readonly CustomerTrackerContext _context;
 
-        public CustomerRepository(CustomerContext context)
+        public CustomerRepository(CustomerTrackerContext context)
         {
             _context = context;
         }
@@ -24,7 +24,10 @@ namespace CustomerTracker.Persistence
 
         public async Task<IList<Customer>> FindByAsync(Expression<Func<Customer, bool>> predicate)
         {
-            return await _context.Set<Customer>().Where(predicate).ToListAsync();
+            return await _context
+                .Set<Customer>()
+                .AsNoTracking()
+                .Where(predicate).ToListAsync();
         }
 
         public async Task<IList<Customer>> AllAsync()
@@ -39,9 +42,12 @@ namespace CustomerTracker.Persistence
             await _context.SaveChangesAsync();
         }
 
-        public Task UpdateAsync(Customer entity)
+        public async Task UpdateAsync(Customer entity)
         {
-            throw new NotImplementedException();
+            if (_context.Set<Customer>().Local.Any(x => x == entity) == false)
+                _context.Set<Customer>().Update(entity);
+
+            await _context.SaveChangesAsync();
         }
 
         public Task DeleteAsync(Guid id)

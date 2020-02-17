@@ -2,11 +2,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CustomerTracker.Persistence
 {
-    public class CustomerContext : DbContext
+    public class CustomerTrackerContext : DbContext
     {
         private readonly IEntityTypeConfiguration[] _configurations;
 
-        public CustomerContext(DbContextOptions options, IEntityTypeConfiguration[] configurations) : base(options)
+        public CustomerTrackerContext(DbContextOptions options, IEntityTypeConfiguration[] configurations) : base(options)
         {
             _configurations = configurations;
         }

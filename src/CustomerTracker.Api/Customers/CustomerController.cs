@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CustomerTracker.Domain;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ namespace CustomerTracker.Api.Customers
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> FindByKeyAsync(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var customer = await _repository.FindByKeyAsync(id);
             if (customer == null)
@@ -42,7 +43,7 @@ namespace CustomerTracker.Api.Customers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CustomerCreateRequest model)
+        public async Task<IActionResult> Insert([FromBody] CustomerCreateRequest model)
         {
             var customer = new Customer
             {
@@ -53,7 +54,28 @@ namespace CustomerTracker.Api.Customers
 
             await _repository.InsertAsync(customer);
 
-            return CreatedAtAction(nameof(FindByKeyAsync), new { customer.Id }, customer);
+            return CreatedAtAction(nameof(GetById), new { customer.Id }, customer);
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] CustomerUpdateRequest model)
+        {
+            var customers = await _repository.FindByAsync(x => x.Id == id);
+            if (!customers.Any())
+            {
+                _logger.LogInformation("Customer Not Found: {id}", id);
+                return NotFound("unknown_customer");
+            }
+
+            var customer = customers.First();
+            customer.Name = model.Name;
+            customer.EmailAddress = model.EmailAddress;
+            customer.IsActive = model.IsActive;
+
+            await _repository.UpdateAsync(customer);
+
+            return Ok();
         }
     }
 }

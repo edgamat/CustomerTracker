@@ -7,9 +7,10 @@ using Microsoft.Extensions.Configuration;
 
 namespace CustomerTracker.Persistence
 {
-    public class CustomerContextFactory : IDesignTimeDbContextFactory<CustomerContext>
+    // ReSharper disable once ClassNeverInstantiated.Global
+    public class CustomerTrackerContextFactory : IDesignTimeDbContextFactory<CustomerTrackerContext>
     {
-        public CustomerContext CreateDbContext(string[] args)
+        public CustomerTrackerContext CreateDbContext(string[] args)
         {
             var runtimePath = GetRuntimePath();
 
@@ -18,7 +19,7 @@ namespace CustomerTracker.Persistence
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            return new CustomerContext(CreateOptions(configuration), EntityTypeConfigurations.All);
+            return new CustomerTrackerContext(CreateOptions(configuration), EntityTypeConfigurations.All);
         }
 
         private static string GetRuntimePath()
@@ -29,12 +30,12 @@ namespace CustomerTracker.Persistence
             return Path.GetDirectoryName(assemblyFile);
         }
 
-        public static DbContextOptions<CustomerContext> CreateOptions(IConfiguration configuration)
+        public static DbContextOptions<CustomerTrackerContext> CreateOptions(IConfiguration configuration)
         {
             if (configuration == null)
                 throw new ArgumentNullException(nameof(configuration));
 
-            var contextOptions = new DbContextOptionsBuilder<CustomerContext>();
+            var contextOptions = new DbContextOptionsBuilder<CustomerTrackerContext>();
 
             contextOptions.UseSqlServer(configuration["Database:ConnectionString"]);
 
