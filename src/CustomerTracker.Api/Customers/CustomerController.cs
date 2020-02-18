@@ -62,7 +62,7 @@ namespace CustomerTracker.Api.Customers
         public async Task<IActionResult> Update(Guid id, [FromBody] CustomerUpdateRequest model)
         {
             var customers = await _repository.FindByAsync(x => x.Id == id);
-            if (!customers.Any())
+            if (customers == null || !customers.Any())
             {
                 _logger.LogInformation("Customer Not Found: {id}", id);
                 return NotFound("unknown_customer");
