@@ -125,7 +125,14 @@ namespace UnitTests.CustomerTracker.Api
             var mockRepository = new TestDouble<ICustomerRepository>();
             mockRepository
                 .Setup(x => x.FindByAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
-                .ReturnsAsync(new List<Customer> {new Customer { Id = id, Name = "John Doe" }});
+                .ReturnsAsync(new List<Customer> {new Customer
+                {
+                    Id = id,
+                    Name = "John Doe",
+                    EmailAddress = "test@example.com",
+                    IsActive = true
+                }});
+
             var sut = new CustomerController(stubLogger.Object, mockRepository.Object);
 
             await sut.Update(id, request);
@@ -135,7 +142,7 @@ namespace UnitTests.CustomerTracker.Api
         }
 
         [Fact]
-        public async Task Return_404_When_Customer_To_Update_Not_Found()
+        public async Task Return_NotFound_When_Customer_To_Update_NotFound()
         {
             var id = Guid.NewGuid();
 

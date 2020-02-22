@@ -6,6 +6,11 @@ namespace CustomerTracker.Persistence
     {
         private readonly IEntityTypeConfiguration[] _configurations;
 
+        public CustomerTrackerContext(IEntityTypeConfiguration[] configurations) : base()
+        {
+            _configurations = configurations;
+        }
+
         public CustomerTrackerContext(DbContextOptions options, IEntityTypeConfiguration[] configurations) : base(options)
         {
             _configurations = configurations;
