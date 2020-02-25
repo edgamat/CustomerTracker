@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using CustomerTracker.Domain;
 using CustomerTracker.Persistence;
 using CustomerTracker.Persistence.Customers;
@@ -11,7 +10,7 @@ namespace UnitTests.CustomerTracker.Persistence
 {
     public class CustomerRepositoryTests
     {
-        [Fact]
+        [Fact(DisplayName = "FindByKey Returns Customer When Found")]
         public void FindByKey_Returns_Customer_When_Found()
         {
             // Arrange
@@ -19,12 +18,12 @@ namespace UnitTests.CustomerTracker.Persistence
             var customer = new Customer { Id = id };
             var customers = new List<Customer> { customer };
 
-            var mockContext = new TestDouble<CustomerTrackerContext>(null);
-            mockContext.HasDbSetOf(customers, c => c.Id);
+            var stubContext = new TestDouble<CustomerTrackerContext>(null);
+            stubContext.HasDbSetOf(customers, c => c.Id);
+
+            var sut = new CustomerRepository(stubContext.Object);
 
             // Act
-            var sut = new CustomerRepository(mockContext.Object);
-
             var actual = sut.FindByKeyAsync(id);
 
             // Assert

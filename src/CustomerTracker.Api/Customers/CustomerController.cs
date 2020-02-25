@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using CustomerTracker.Domain;
 using Microsoft.AspNetCore.Mvc;
@@ -61,14 +60,28 @@ namespace CustomerTracker.Api.Customers
         [Route("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] CustomerUpdateRequest model)
         {
-            var customers = await _repository.FindByAsync(x => x.Id == id);
-            if (customers == null || !customers.Any())
+            // var matches = await _repository.FindByAsync(x => x.EmailAddress == model.EmailAddress && x.Id != id);
+            // if (matches != null && matches.Any())
+            // {
+            //     ModelState.AddModelError("Name", "Cannot create customer with same email address");
+            //     return BadRequest(ModelState);
+            // }
+
+            var customer = await _repository.FindByKeyAsync(id);
+            if (customer == null)
             {
                 _logger.LogInformation("Customer Not Found: {id}", id);
                 return NotFound("unknown_customer");
             }
 
-            var customer = customers.First();
+            // // When no changes are made then don't bother updating database
+            // if (customer.Name == model.Name &&
+            //     customer.EmailAddress == model.EmailAddress &&
+            //     customer.IsActive == model.IsActive)
+            // {
+            //     return Ok();
+            // }
+
             customer.Name = model.Name;
             customer.EmailAddress = model.EmailAddress;
             customer.IsActive = model.IsActive;

@@ -12,7 +12,7 @@ using Xunit;
 
 namespace UnitTests.CustomerTracker.Api
 {
-    public class CustomerTests
+    public class CustomerControllerTests
     {
         [Fact]
         public async Task Return_OK_Response_When_Found()
@@ -71,25 +71,6 @@ namespace UnitTests.CustomerTracker.Api
         }
 
         [Fact]
-        public async Task Return_CreatedAt_When_Creating_New_Customer()
-        {
-            var stubLogger = new TestDouble<ILogger<CustomerController>>();
-            var stubRepository = new TestDouble<ICustomerRepository>();
-
-            var request = new CustomerCreateRequest
-            {
-                Name = "John Doe",
-                EmailAddress = "test@example.com"
-            };
-
-            var sut = new CustomerController(stubLogger.Object, stubRepository.Object);
-
-            var result = await sut.Insert(request);
-
-            result.Should().BeOfType<CreatedAtActionResult>();
-        }
-
-        [Fact]
         public async Task New_Customers_Are_Active()
         {
             var stubLogger = new TestDouble<ILogger<CustomerController>>();
@@ -110,6 +91,25 @@ namespace UnitTests.CustomerTracker.Api
         }
 
         [Fact]
+        public async Task Return_CreatedAt_When_Creating_New_Customer()
+        {
+            var stubLogger = new TestDouble<ILogger<CustomerController>>();
+            var stubRepository = new TestDouble<ICustomerRepository>();
+
+            var request = new CustomerCreateRequest
+            {
+                Name = "John Doe",
+                EmailAddress = "test@example.com"
+            };
+
+            var sut = new CustomerController(stubLogger.Object, stubRepository.Object);
+
+            var result = await sut.Insert(request);
+
+            result.Should().BeOfType<CreatedAtActionResult>();
+        }
+
+        [Fact]
         public async Task Return_OK_When_Updates_Successful()
         {
             var id = Guid.NewGuid();
@@ -124,14 +124,14 @@ namespace UnitTests.CustomerTracker.Api
             var stubLogger = new TestDouble<ILogger<CustomerController>>();
             var mockRepository = new TestDouble<ICustomerRepository>();
             mockRepository
-                .Setup(x => x.FindByAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
-                .ReturnsAsync(new List<Customer> {new Customer
+                .Setup(x => x.FindByKeyAsync(id))
+                .ReturnsAsync(new Customer
                 {
                     Id = id,
                     Name = "John Doe",
                     EmailAddress = "test@example.com",
                     IsActive = true
-                }});
+                });
 
             var sut = new CustomerController(stubLogger.Object, mockRepository.Object);
 
@@ -156,8 +156,8 @@ namespace UnitTests.CustomerTracker.Api
             var stubLogger = new TestDouble<ILogger<CustomerController>>();
             var stubRepository = new TestDouble<ICustomerRepository>();
             stubRepository
-                .Setup(x => x.FindByAsync(It.IsAny<Expression<Func<Customer, bool>>>()))
-                .ReturnsAsync(new List<Customer>());
+                .Setup(x => x.FindByKeyAsync(id))
+                .ReturnsAsync((Customer)null);
 
             var sut = new CustomerController(stubLogger.Object, stubRepository.Object);
 
