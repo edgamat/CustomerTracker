@@ -60,13 +60,6 @@ namespace CustomerTracker.Api.Customers
         [Route("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] CustomerUpdateRequest model)
         {
-            // var matches = await _repository.FindByAsync(x => x.EmailAddress == model.EmailAddress && x.Id != id);
-            // if (matches != null && matches.Any())
-            // {
-            //     ModelState.AddModelError("Name", "Cannot create customer with same email address");
-            //     return BadRequest(ModelState);
-            // }
-
             var customer = await _repository.FindByKeyAsync(id);
             if (customer == null)
             {
