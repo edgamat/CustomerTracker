@@ -1,4 +1,5 @@
-using System.Runtime.CompilerServices;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using CustomerTracker.Domain.SharedKernel;
 
@@ -21,27 +22,45 @@ namespace CustomerTracker.Domain
     {
         private readonly ICustomerRepository _repository;
         private readonly IAccountingGateway _gateway;
+        private readonly IDateTimeService _dateTimeService;
 
-        public CreateNewCustomerCommandHandler(ICustomerRepository repository, IAccountingGateway gateway)
+        public CreateNewCustomerCommandHandler(
+            ICustomerRepository repository,
+            IAccountingGateway gateway,
+            IDateTimeService dateTimeService)
         {
             _repository = repository;
             _gateway = gateway;
+            _dateTimeService = dateTimeService;
         }
 
         public async Task<Result> HandleAsync(CreateNewCustomerCommand command)
         {
+            if (command == null)
+            {
+                return Result.Fail("command is null");
+            }
+
             var customer = new Customer
             {
                 Name = command.Name,
                 EmailAddress = command.EmailAddress,
-                IsActive = true
+                IsActive = true,
+                AddedAt = _dateTimeService.OffsetUtcNow
             };
 
-            await _repository.InsertAsync(customer);
+            try
+            {
+                await _repository.InsertAsync(customer);
 
-            await _gateway.RegisterCustomerAsync(customer);
+                await _gateway.RegisterCustomerAsync(customer);
 
-            return Result.Ok();
+                return Result.Ok();
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail(ex.Message);
+            }
         }
     }
 }
