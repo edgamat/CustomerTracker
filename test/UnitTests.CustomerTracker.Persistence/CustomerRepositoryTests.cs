@@ -15,7 +15,7 @@ namespace UnitTests.CustomerTracker.Persistence
         {
             // Arrange
             var id = Guid.NewGuid();
-            var customer = new Customer { Id = id };
+            var customer = new Customer("John Doe", "test@example.com");
             var customers = new List<Customer> { customer };
 
             var stubContext = new TestDouble<CustomerTrackerContext>(null);

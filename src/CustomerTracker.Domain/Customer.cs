@@ -4,14 +4,35 @@ namespace CustomerTracker.Domain
 {
     public class Customer
     {
-        public Guid Id { get; set; }
+        protected Customer()
+        {
+        }
 
-        public string Name { get; set; }
+        public Customer(string name, string emailAddress)
+        {
+            EditPersonalInfo(name, emailAddress);
+            SetStatus(true);
+        }
 
-        public string EmailAddress { get; set; }
+        public Guid Id { get; }
 
-        public bool IsActive { get; set; }
+        public string Name { get; private set; }
 
-        public DateTimeOffset? AddedAt { get; set; }
+        public string EmailAddress { get; private set; }
+
+        public bool IsActive { get; private set; }
+
+        public DateTimeOffset? AddedAt { get; private set; }
+
+        public void SetStatus(bool isActive)
+        {
+            IsActive = isActive;
+        }
+
+        public void EditPersonalInfo(string name, string emailAddress)
+        {
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            EmailAddress = emailAddress ?? throw new ArgumentNullException(nameof(emailAddress));
+        }
     }
 }

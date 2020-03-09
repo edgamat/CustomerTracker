@@ -44,12 +44,7 @@ namespace CustomerTracker.Api.Customers
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] CustomerCreateRequest model)
         {
-            var customer = new Customer
-            {
-                Name = model.Name,
-                EmailAddress = model.EmailAddress,
-                IsActive = true
-            };
+            var customer = new Customer(model.Name, model.EmailAddress);
 
             await _repository.InsertAsync(customer);
 
@@ -75,9 +70,8 @@ namespace CustomerTracker.Api.Customers
             //     return Ok();
             // }
 
-            customer.Name = model.Name;
-            customer.EmailAddress = model.EmailAddress;
-            customer.IsActive = model.IsActive;
+            customer.EditPersonalInfo(model.Name, model.EmailAddress);
+            customer.SetStatus(model.IsActive.GetValueOrDefault());
 
             await _repository.UpdateAsync(customer);
 

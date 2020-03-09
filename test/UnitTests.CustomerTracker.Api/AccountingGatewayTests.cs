@@ -24,7 +24,7 @@ namespace UnitTests.CustomerTracker.Api
 
             var stubFactory = handler.GetMockHttpClientFactory("accounting");
 
-            var customer = new Customer();
+            var customer = new Customer("John", "test@example.com");
 
             var sut = new AccountingGateway(stubFactory.Object, configuration);
 
@@ -36,7 +36,7 @@ namespace UnitTests.CustomerTracker.Api
         [Fact]
         public async Task Failure_Result_When_BadData_Sent()
         {
-            var customer = new Customer { Name = "Joe" };
+            var customer = new Customer("John", "test@example.com");
 
             var configuration = new AccountingConfiguration{ BaseUri = "http://test.local" };
             var handler = new Mock<IMockHttpMessageHandler>();

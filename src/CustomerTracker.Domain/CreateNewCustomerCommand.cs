@@ -41,13 +41,7 @@ namespace CustomerTracker.Domain
                 return Result.Fail("command is null");
             }
 
-            var customer = new Customer
-            {
-                Name = command.Name,
-                EmailAddress = command.EmailAddress,
-                IsActive = true,
-                AddedAt = _dateTimeService.OffsetUtcNow
-            };
+            var customer = new Customer(command.Name, command.EmailAddress);
 
             try
             {

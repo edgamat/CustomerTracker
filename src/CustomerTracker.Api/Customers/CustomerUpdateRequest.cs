@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace CustomerTracker.Api.Customers
 {
     public class CustomerUpdateRequest
@@ -6,6 +8,7 @@ namespace CustomerTracker.Api.Customers
 
         public string EmailAddress { get; set; }
 
-        public bool IsActive { get; set; }
+        [Required]
+        public bool? IsActive { get; set; }
     }
 }

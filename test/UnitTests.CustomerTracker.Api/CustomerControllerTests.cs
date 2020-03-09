@@ -22,7 +22,7 @@ namespace UnitTests.CustomerTracker.Api
 
             stubRepository
                 .Setup(x => x.FindByKeyAsync(id))
-                .ReturnsAsync(new Customer { Id = id });
+                .ReturnsAsync(new Customer("John Doe", "test@example.com"));
 
             var sut = new CustomerController(stubLogger.Object, stubRepository.Object);
 
@@ -34,10 +34,10 @@ namespace UnitTests.CustomerTracker.Api
         [Fact]
         public async Task Return_NotFound_With_Body_When_Customer_Unknown()
         {
+            var id = Guid.NewGuid();
+
             var stubLogger = new TestDouble<ILogger<CustomerController>>();
             var stubRepository = new TestDouble<ICustomerRepository>();
-
-            var id = Guid.NewGuid();
 
             var sut = new CustomerController(stubLogger.Object, stubRepository.Object);
 
@@ -49,10 +49,10 @@ namespace UnitTests.CustomerTracker.Api
         [Fact]
         public async Task Log_Unknown_Customer_When_Not_Found()
         {
+            var id = Guid.NewGuid();
+
             var mockLogger = new TestDouble<ILogger<CustomerController>>();
             var stubRepository = new TestDouble<ICustomerRepository>();
-
-            var id = Guid.NewGuid();
 
             var sut = new CustomerController(mockLogger.Object, stubRepository.Object);
 
@@ -123,13 +123,7 @@ namespace UnitTests.CustomerTracker.Api
             var mockRepository = new TestDouble<ICustomerRepository>();
             mockRepository
                 .Setup(x => x.FindByKeyAsync(id))
-                .ReturnsAsync(new Customer
-                {
-                    Id = id,
-                    Name = "John Doe",
-                    EmailAddress = "test@example.com",
-                    IsActive = true
-                });
+                .ReturnsAsync(new Customer("John Doe", "test@example.com"));
 
             var sut = new CustomerController(stubLogger.Object, mockRepository.Object);
 
