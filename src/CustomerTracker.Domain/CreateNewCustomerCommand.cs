@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using CustomerTracker.Domain.SharedKernel;
 
@@ -41,15 +40,22 @@ namespace CustomerTracker.Domain
                 return Result.Fail("command is null");
             }
 
-            var customer = new Customer(command.Name, command.EmailAddress);
+            var request = new RegisterCustomerRequest(command.Name, command.EmailAddress);
 
             try
             {
-                await _repository.InsertAsync(customer);
+                var result = await _gateway.RegisterCustomerAsync(request);
+                if (result.IsSuccess)
+                {
+                    var accountingId = ((Result<Guid>) result).Value;
+                    var customer = new Customer(accountingId, command.Name, command.EmailAddress);
 
-                await _gateway.RegisterCustomerAsync(customer);
+                    await _repository.InsertAsync(customer);
 
-                return Result.Ok();
+                    return Result.Ok(customer.Id);
+                }
+
+                return result;
             }
             catch (Exception ex)
             {

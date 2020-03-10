@@ -33,7 +33,7 @@ namespace UnitTests.CustomerTracker.Domain
 
             sut.Invoking(x => x.EditPersonalInfo(null, "test2@example.com"))
                 .Should()
-                .Throw<ArgumentException>()
+                .Throw<ArgumentNullException>()
                 .WithMessage("*name*");
         }
 
@@ -44,7 +44,7 @@ namespace UnitTests.CustomerTracker.Domain
 
             sut.Invoking(x => x.EditPersonalInfo("John Doe", null))
                 .Should()
-                .Throw<ArgumentException>()
+                .Throw<ArgumentNullException>()
                 .WithMessage("*emailAddress*");
         }
 

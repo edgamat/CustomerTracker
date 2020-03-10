@@ -24,11 +24,11 @@ namespace UnitTests.CustomerTracker.Api
 
             var stubFactory = handler.GetMockHttpClientFactory("accounting");
 
-            var customer = new Customer("John", "test@example.com");
+            var request = new RegisterCustomerRequest("John", "test@example.com");
 
             var sut = new AccountingGateway(stubFactory.Object, configuration);
 
-            var result = await sut.RegisterCustomerAsync(customer);
+            var result = await sut.RegisterCustomerAsync(request);
 
             result.IsSuccess.Should().BeTrue();
         }
@@ -36,14 +36,14 @@ namespace UnitTests.CustomerTracker.Api
         [Fact]
         public async Task Failure_Result_When_BadData_Sent()
         {
-            var customer = new Customer("John", "test@example.com");
+            var request = new RegisterCustomerRequest("John", "test@example.com");
 
             var configuration = new AccountingConfiguration{ BaseUri = "http://test.local" };
             var handler = new Mock<IMockHttpMessageHandler>();
             handler.AddJsonResponse(
                 "http://test.local/customer",
                 HttpMethod.Post,
-                customer,
+                request,
                 new RegistrationErrors {Message = "Test Error"},
                 HttpStatusCode.BadRequest);
 
@@ -51,7 +51,7 @@ namespace UnitTests.CustomerTracker.Api
 
             var sut = new AccountingGateway(stubFactory.Object, configuration);
 
-            var result = await sut.RegisterCustomerAsync(customer);
+            var result = await sut.RegisterCustomerAsync(request);
 
             using (new AssertionScope())
             {

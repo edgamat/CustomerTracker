@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using CustomerTracker.Api.Customers;
 using CustomerTracker.Domain;
+using CustomerTracker.Domain.SharedKernel;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -69,10 +70,41 @@ namespace UnitTests.CustomerTracker.Api
         }
 
         [Fact]
-        public async Task New_Customers_Are_Active()
+        public void Return_ServerError_When_Creation_Fails()
+        {
+            var stubLogger = new TestDouble<ILogger<CustomerController>>();
+            var stubRepository = new TestDouble<ICustomerRepository>();
+            stubRepository
+                .Setup(x => x.InsertAsync(It.IsAny<Customer>()))
+                .ThrowsAsync(new Exception("Something went wrong"));
+
+            var request = new CustomerCreateRequest
+            {
+                Name = "John Doe",
+                EmailAddress = "test@example.com"
+            };
+
+            var sut = new CustomerController(stubLogger.Object, stubRepository.Object);
+
+            async Task Act()
+            {
+                await sut.Insert(request);
+            }
+
+            sut.Invoking(x => Act())
+                .Should()
+                .Throw<Exception>()
+                .WithMessage("*Something went wrong*");
+        }
+
+        [Fact]
+        public async Task Return_CreatedAt_When_Creating_New_Customer()
         {
             var stubLogger = new TestDouble<ILogger<CustomerController>>();
             var mockRepository = new TestDouble<ICustomerRepository>();
+            mockRepository
+                .Setup(x => x.InsertAsync(It.IsAny<Customer>()))
+                .Returns(Task.CompletedTask);
 
             var request = new CustomerCreateRequest
             {
@@ -85,26 +117,7 @@ namespace UnitTests.CustomerTracker.Api
             await sut.Insert(request);
 
             mockRepository
-                .Verify(x => x.InsertAsync(It.Is<Customer>(c => c.IsActive)), Times.Once);
-        }
-
-        [Fact]
-        public async Task Return_CreatedAt_When_Creating_New_Customer()
-        {
-            var stubLogger = new TestDouble<ILogger<CustomerController>>();
-            var stubRepository = new TestDouble<ICustomerRepository>();
-
-            var request = new CustomerCreateRequest
-            {
-                Name = "John Doe",
-                EmailAddress = "test@example.com"
-            };
-
-            var sut = new CustomerController(stubLogger.Object, stubRepository.Object);
-
-            var result = await sut.Insert(request);
-
-            result.Should().BeOfType<CreatedAtActionResult>();
+                .Verify(x => x.InsertAsync(It.IsAny<Customer>()), Times.Once);
         }
 
         [Fact]
@@ -157,5 +170,17 @@ namespace UnitTests.CustomerTracker.Api
 
             result.Should().BeOfType<NotFoundObjectResult>();
         }
+
+        // private CustomerController CreateSystemUnderTest(
+        //     TestDouble<ILogger<CustomerController>> logger = null,
+        //     TestDouble<ICustomerRepository> repository = null,
+        //     TestDouble<ICommandHandler<CreateNewCustomerCommand>> handler = null)
+        // {
+        //     if (logger == null) logger = new TestDouble<ILogger<CustomerController>>();
+        //     if (repository == null) repository = new TestDouble<ICustomerRepository>();
+        //     if (handler == null) handler = new TestDouble<ICommandHandler<CreateNewCustomerCommand>>();
+        //
+        //     return new CustomerController(logger.Object, repository.Object, handler.Object);
+        // }
     }
 }

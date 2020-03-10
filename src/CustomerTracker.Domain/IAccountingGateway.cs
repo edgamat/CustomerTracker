@@ -5,6 +5,6 @@ namespace CustomerTracker.Domain
 {
     public interface IAccountingGateway
     {
-        Task<Result> RegisterCustomerAsync(Customer customer);
+        Task<Result> RegisterCustomerAsync(RegisterCustomerRequest request);
     }
 }

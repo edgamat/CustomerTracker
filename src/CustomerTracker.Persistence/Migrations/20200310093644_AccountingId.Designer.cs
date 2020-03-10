@@ -4,14 +4,16 @@ using CustomerTracker.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CustomerTracker.Persistence.Migrations
 {
     [DbContext(typeof(CustomerTrackerContext))]
-    partial class CustomerTrackerContextModelSnapshot : ModelSnapshot
+    [Migration("20200310093644_AccountingId")]
+    partial class AccountingId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

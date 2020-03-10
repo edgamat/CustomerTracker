@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CustomerTracker.Domain;
+using CustomerTracker.Domain.SharedKernel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -15,7 +16,9 @@ namespace CustomerTracker.Api.Customers
         private readonly ILogger<CustomerController> _logger;
         private readonly ICustomerRepository _repository;
 
-        public CustomerController(ILogger<CustomerController> logger, ICustomerRepository repository)
+        public CustomerController(
+            ILogger<CustomerController> logger,
+            ICustomerRepository repository)
         {
             _logger = logger;
             _repository = repository;
@@ -48,7 +51,19 @@ namespace CustomerTracker.Api.Customers
 
             await _repository.InsertAsync(customer);
 
-            return CreatedAtAction(nameof(GetById), new { customer.Id }, customer);
+            return CreatedAtAction(nameof(GetById), new { customer.Id }, null);
+
+            // var command = new CreateNewCustomerCommand(model.Name, model.EmailAddress);
+            //
+            // var result = await _handler.HandleAsync(command);
+            //
+            // if (result.IsSuccess)
+            // {
+            //     var newId = ((Result<Guid>) result).Value;
+            //     return CreatedAtAction(nameof(GetById), new { id = newId }, null);
+            // }
+            //
+            // throw new Exception(result.Error);
         }
 
         [HttpPut]

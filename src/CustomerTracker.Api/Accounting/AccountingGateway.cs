@@ -18,15 +18,15 @@ namespace CustomerTracker.Api.Accounting
             _configuration = configuration;
         }
 
-        public async Task<Result> RegisterCustomerAsync(Customer customer)
+        public async Task<Result> RegisterCustomerAsync(RegisterCustomerRequest request)
         {
             var uri = $"{_configuration.BaseUri}/customer";
 
-            var response = await _client.PostAsJsonAsync(uri, customer);
+            var response = await _client.PostAsJsonAsync(uri, request);
             if (response.IsSuccessStatusCode)
             {
                 var customerData = await response.Content.ReadAsAsync<RegisteredCustomer>();
-                return Result.Ok(customerData);
+                return Result.Ok(customerData.Id);
             }
 
             if (response.StatusCode == HttpStatusCode.BadRequest)

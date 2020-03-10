@@ -1,4 +1,6 @@
+using CustomerTracker.Api.Accounting;
 using CustomerTracker.Domain;
+using CustomerTracker.Domain.SharedKernel;
 using CustomerTracker.Persistence;
 using CustomerTracker.Persistence.Customers;
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +31,13 @@ namespace CustomerTracker.Api
 
             services.AddScoped(p => new CustomerTrackerContext(options, configurations));
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+
+            services.AddHttpClient("accounting");
+            services.AddScoped(p => Configuration.GetSection("Accounting").Get<AccountingConfiguration>());
+            services.AddScoped<IAccountingGateway, AccountingGateway>();
+            services.AddScoped<IDateTimeService, DateTimeService>();
+
+            services.AddScoped<ICommandHandler<CreateNewCustomerCommand>, CreateNewCustomerCommandHandler>();
 
             services.AddControllers(o => o.SuppressAsyncSuffixInActionNames = false);
         }

@@ -14,6 +14,13 @@ namespace CustomerTracker.Domain
             SetStatus(true);
         }
 
+        public Customer(Guid accountingId, string name, string emailAddress)
+        {
+            AccountingId = accountingId;
+            EditPersonalInfo(name, emailAddress);
+            SetStatus(true);
+        }
+
         public Guid Id { get; }
 
         public string Name { get; private set; }
@@ -21,6 +28,8 @@ namespace CustomerTracker.Domain
         public string EmailAddress { get; private set; }
 
         public bool IsActive { get; private set; }
+
+        public Guid? AccountingId { get; private set; }
 
         public DateTimeOffset? AddedAt { get; private set; }
 
