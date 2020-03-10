@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using CustomerTracker.Domain;
-using CustomerTracker.Domain.SharedKernel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -22,12 +20,6 @@ namespace CustomerTracker.Api.Customers
         {
             _logger = logger;
             _repository = repository;
-        }
-
-        [HttpGet]
-        public async Task<IEnumerable<Customer>> AllAsync()
-        {
-            return await _repository.AllAsync();
         }
 
         [HttpGet]
@@ -52,18 +44,6 @@ namespace CustomerTracker.Api.Customers
             await _repository.InsertAsync(customer);
 
             return CreatedAtAction(nameof(GetById), new { customer.Id }, null);
-
-            // var command = new CreateNewCustomerCommand(model.Name, model.EmailAddress);
-            //
-            // var result = await _handler.HandleAsync(command);
-            //
-            // if (result.IsSuccess)
-            // {
-            //     var newId = ((Result<Guid>) result).Value;
-            //     return CreatedAtAction(nameof(GetById), new { id = newId }, null);
-            // }
-            //
-            // throw new Exception(result.Error);
         }
 
         [HttpPut]
@@ -76,14 +56,6 @@ namespace CustomerTracker.Api.Customers
                 _logger.LogInformation("Customer Not Found: {id}", id);
                 return NotFound("unknown_customer");
             }
-
-            // // When no changes are made then don't bother updating database
-            // if (customer.Name == model.Name &&
-            //     customer.EmailAddress == model.EmailAddress &&
-            //     customer.IsActive == model.IsActive)
-            // {
-            //     return Ok();
-            // }
 
             customer.EditPersonalInfo(model.Name, model.EmailAddress);
             customer.SetStatus(model.IsActive.GetValueOrDefault());

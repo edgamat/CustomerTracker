@@ -170,17 +170,5 @@ namespace UnitTests.CustomerTracker.Api
 
             result.Should().BeOfType<NotFoundObjectResult>();
         }
-
-        // private CustomerController CreateSystemUnderTest(
-        //     TestDouble<ILogger<CustomerController>> logger = null,
-        //     TestDouble<ICustomerRepository> repository = null,
-        //     TestDouble<ICommandHandler<CreateNewCustomerCommand>> handler = null)
-        // {
-        //     if (logger == null) logger = new TestDouble<ILogger<CustomerController>>();
-        //     if (repository == null) repository = new TestDouble<ICustomerRepository>();
-        //     if (handler == null) handler = new TestDouble<ICommandHandler<CreateNewCustomerCommand>>();
-        //
-        //     return new CustomerController(logger.Object, repository.Object, handler.Object);
-        // }
     }
 }
