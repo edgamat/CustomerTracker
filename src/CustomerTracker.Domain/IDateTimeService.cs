@@ -8,11 +8,4 @@ namespace CustomerTracker.Domain
 
         DateTimeOffset OffsetUtcNow { get; }
     }
-
-    public class DateTimeService : IDateTimeService
-    {
-        public DateTime UtcNow => DateTime.UtcNow;
-
-        public DateTimeOffset OffsetUtcNow => DateTimeOffset.UtcNow;
-    }
 }

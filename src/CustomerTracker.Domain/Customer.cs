@@ -4,6 +4,7 @@ namespace CustomerTracker.Domain
 {
     public class Customer
     {
+        // ReSharper disable once UnusedMember.Global
         protected Customer()
         {
         }
