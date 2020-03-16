@@ -16,6 +16,14 @@ namespace UnitTests.CustomerTracker.Domain
         }
 
         [Fact]
+        public void Customer_Determines_When_Added()
+        {
+            var sut = new Customer("John Doe", "test@example.com");
+
+            Assert.True(sut.AddedAt.HasValue);
+        }
+
+        [Fact]
         public void PersonalInfo_Updated_Correctly()
         {
             var sut = new Customer("John Doe", "test@example.com");

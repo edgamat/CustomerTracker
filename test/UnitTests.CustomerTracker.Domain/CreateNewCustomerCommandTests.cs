@@ -1,10 +1,8 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using CustomerTracker.Domain;
 using CustomerTracker.Domain.SharedKernel;
 using FluentAssertions;
-using FluentAssertions.Execution;
 using Moq;
 using Xunit;
 
@@ -19,9 +17,8 @@ namespace UnitTests.CustomerTracker.Domain
 
             var mockRepository = new TestDouble<ICustomerRepository>();
             var mockGateway = new TestDouble<IAccountingGateway>();
-            var stubDateTimeService = new TestDouble<IDateTimeService>();
 
-            var sut = new CreateNewCustomerCommandHandler(mockRepository.Object, mockGateway.Object, stubDateTimeService.Object);
+            var sut = new CreateNewCustomerCommandHandler(mockRepository.Object, mockGateway.Object);
 
             async Task Act()
             {
@@ -39,9 +36,8 @@ namespace UnitTests.CustomerTracker.Domain
         {
             var mockRepository = new TestDouble<ICustomerRepository>();
             var mockGateway = new TestDouble<IAccountingGateway>();
-            var stubDateTimeService = new TestDouble<IDateTimeService>();
 
-            var sut = new CreateNewCustomerCommandHandler(mockRepository.Object, mockGateway.Object, stubDateTimeService.Object);
+            var sut = new CreateNewCustomerCommandHandler(mockRepository.Object, mockGateway.Object);
 
             var result =  await sut.HandleAsync(null);
 
@@ -52,22 +48,34 @@ namespace UnitTests.CustomerTracker.Domain
         [Fact]
         public async Task ReturnSuccessWhenRegistered()
         {
+            // Arrange
             var newId = Guid.NewGuid();
+            var newAccountingId = Guid.NewGuid();
             var command = new CreateNewCustomerCommand("name", "test@example.com");
 
             var mockRepository = new TestDouble<ICustomerRepository>();
+            mockRepository
+                .Setup(x => x.InsertAsync(It.IsAny<Customer>()))
+                .Callback((Customer c) =>
+                {
+                    c.Id = newId;
+                });
+
             var mockGateway = new TestDouble<IAccountingGateway>();
             mockGateway
                 .Setup(x => x.RegisterCustomerAsync(It.IsAny<RegisterCustomerRequest>()))
-                .ReturnsAsync(Result.Ok(newId));
+                .ReturnsAsync(Result.Ok(newAccountingId));
 
-            var stubDateTimeService = new TestDouble<IDateTimeService>();
+            var sut = new CreateNewCustomerCommandHandler(mockRepository.Object, mockGateway.Object);
 
-            var sut = new CreateNewCustomerCommandHandler(mockRepository.Object, mockGateway.Object, stubDateTimeService.Object);
-
+            // Act
             var result = await sut.HandleAsync(command);
 
+            // Assert
             result.IsSuccess.Should().BeTrue();
+
+            mockRepository
+                .Verify(x => x.InsertAsync(It.Is<Customer>(c => c.AccountingId == newAccountingId)), Times.Once);
         }
 
         [Fact]
@@ -86,9 +94,7 @@ namespace UnitTests.CustomerTracker.Domain
                 .Setup(x => x.RegisterCustomerAsync(It.IsAny<RegisterCustomerRequest>()))
                 .ReturnsAsync(Result.Ok(newId));
 
-            var stubDateTimeService = new TestDouble<IDateTimeService>();
-
-            var sut = new CreateNewCustomerCommandHandler(mockRepository.Object, mockGateway.Object, stubDateTimeService.Object);
+            var sut = new CreateNewCustomerCommandHandler(mockRepository.Object, mockGateway.Object);
 
             var result = await sut.HandleAsync(command);
 

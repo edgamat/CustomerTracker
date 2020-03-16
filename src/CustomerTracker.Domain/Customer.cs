@@ -13,16 +13,16 @@ namespace CustomerTracker.Domain
         {
             EditPersonalInfo(name, emailAddress);
             SetStatus(true);
+            AddedAt = DateTimeOffset.UtcNow;
         }
 
         public Customer(Guid accountingId, string name, string emailAddress)
+            : this(name, emailAddress)
         {
             AccountingId = accountingId;
-            EditPersonalInfo(name, emailAddress);
-            SetStatus(true);
         }
 
-        public Guid Id { get; }
+        public Guid Id { get; set; }
 
         public string Name { get; private set; }
 
@@ -30,9 +30,9 @@ namespace CustomerTracker.Domain
 
         public bool IsActive { get; private set; }
 
-        public Guid? AccountingId { get; private set; }
+        public Guid? AccountingId { get; }
 
-        public DateTimeOffset? AddedAt { get; private set; }
+        public DateTimeOffset? AddedAt { get; }
 
         public void SetStatus(bool isActive)
         {

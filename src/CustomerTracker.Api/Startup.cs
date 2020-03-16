@@ -1,3 +1,4 @@
+using System;
 using CustomerTracker.Api.Accounting;
 using CustomerTracker.Domain;
 using CustomerTracker.Domain.SharedKernel;
@@ -37,7 +38,7 @@ namespace CustomerTracker.Api
             services.AddScoped<IAccountingGateway, AccountingGateway>();
             services.AddScoped<IDateTimeService, DateTimeService>();
 
-            services.AddScoped<ICommandHandler<CreateNewCustomerCommand>, CreateNewCustomerCommandHandler>();
+            services.AddScoped<ICommandHandler<CreateNewCustomerCommand, Guid>, CreateNewCustomerCommandHandler>();
 
             services.AddControllers(o => o.SuppressAsyncSuffixInActionNames = false);
         }

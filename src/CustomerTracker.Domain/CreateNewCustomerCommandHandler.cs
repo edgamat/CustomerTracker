@@ -4,27 +4,24 @@ using CustomerTracker.Domain.SharedKernel;
 
 namespace CustomerTracker.Domain
 {
-    public class CreateNewCustomerCommandHandler : ICommandHandler<CreateNewCustomerCommand>
+    public class CreateNewCustomerCommandHandler : ICommandHandler<CreateNewCustomerCommand, Guid>
     {
         private readonly ICustomerRepository _repository;
         private readonly IAccountingGateway _gateway;
-        private readonly IDateTimeService _dateTimeService;
 
         public CreateNewCustomerCommandHandler(
             ICustomerRepository repository,
-            IAccountingGateway gateway,
-            IDateTimeService dateTimeService)
+            IAccountingGateway gateway)
         {
             _repository = repository;
             _gateway = gateway;
-            _dateTimeService = dateTimeService;
         }
 
-        public async Task<Result> HandleAsync(CreateNewCustomerCommand command)
+        public async Task<Result<Guid>> HandleAsync(CreateNewCustomerCommand command)
         {
             if (command == null)
             {
-                return Result.Fail("command is null");
+                return Result.Fail<Guid>("command is null");
             }
 
             var request = new RegisterCustomerRequest(command.Name, command.EmailAddress);
@@ -42,11 +39,11 @@ namespace CustomerTracker.Domain
                     return Result.Ok(customer.Id);
                 }
 
-                return result;
+                return Result.Fail<Guid>(result.Error);
             }
             catch (Exception ex)
             {
-                return Result.Fail(ex.Message);
+                return Result.Fail<Guid>(ex.Message);
             }
         }
     }

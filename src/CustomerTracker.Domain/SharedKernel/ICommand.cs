@@ -6,9 +6,9 @@ namespace CustomerTracker.Domain.SharedKernel
     {
     }
 
-    public interface ICommandHandler<TCommand>
+    public interface ICommandHandler<TCommand, TResult>
         where TCommand : ICommand
     {
-        Task<Result> HandleAsync(TCommand command);
+        Task<Result<TResult>> HandleAsync(TCommand command);
     }
 }
